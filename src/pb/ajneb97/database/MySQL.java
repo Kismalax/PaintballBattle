@@ -27,8 +27,7 @@ public class MySQL {
 		//Cada usuario tendra un registro en donde se guardaran sus registros global, que se especifica con el INTEGER Global = 1
 		//Si el atributo Global = 0 significa que este registro sera usado para los tops mensuales y semanales
 		public static void createTablePlayers(ConexionDatabase conexion) {
-	        try {
-	        	PreparedStatement statement = conexion.getConnection().prepareStatement("CREATE TABLE IF NOT EXISTS "+conexion.getTablePlayers()+" (`UUID` varchar(200), `Name` varchar(40), `Date` varchar(100), `Year` INT(10), `Month` INT(5), `Week` INT(5), `Day` INT(5), `Arena` varchar(40), `Win` INT(2), `Tie` INT(2), `Lose` INT(2), `Kills` INT(5), `Coins` INT(10), `Global_Data` INT(2) )");
+	        try (PreparedStatement statement = conexion.getConnection().prepareStatement("CREATE TABLE IF NOT EXISTS "+conexion.getTablePlayers()+" (`UUID` varchar(200), `Name` varchar(40), `Date` varchar(100), `Year` INT(10), `Month` INT(5), `Week` INT(5), `Day` INT(5), `Arena` varchar(40), `Win` INT(2), `Tie` INT(2), `Lose` INT(2), `Kills` INT(5), `Coins` INT(10), `Global_Data` INT(2) )")) {
 	            statement.executeUpdate();
 	        } catch (SQLException e) {
 	            e.printStackTrace();
@@ -36,8 +35,7 @@ public class MySQL {
 	    }
 		
 		public static void createTablePerks(ConexionDatabase conexion) {
-	        try {
-	        	PreparedStatement statement = conexion.getConnection().prepareStatement("CREATE TABLE IF NOT EXISTS "+conexion.getTablePerks()+" (`UUID` varchar(200), `Name` varchar(40), `Perk` varchar(40), `Level` INT(2) )");
+	        try (PreparedStatement statement = conexion.getConnection().prepareStatement("CREATE TABLE IF NOT EXISTS "+conexion.getTablePerks()+" (`UUID` varchar(200), `Name` varchar(40), `Perk` varchar(40), `Level` INT(2) )")) {
 	            statement.executeUpdate();
 	        } catch (SQLException e) {
 	            e.printStackTrace();
@@ -45,8 +43,7 @@ public class MySQL {
 	    }
 		
 		public static void createTableHats(ConexionDatabase conexion) {
-	        try {
-	        	PreparedStatement statement = conexion.getConnection().prepareStatement("CREATE TABLE IF NOT EXISTS "+conexion.getTableHats()+" (`UUID` varchar(200), `Name` varchar(40), `Hat` varchar(40), `Selected` INT(2) )");
+	        try (PreparedStatement statement = conexion.getConnection().prepareStatement("CREATE TABLE IF NOT EXISTS "+conexion.getTableHats()+" (`UUID` varchar(200), `Name` varchar(40), `Hat` varchar(40), `Selected` INT(2) )")) {
 	            statement.executeUpdate();
 	        } catch (SQLException e) {
 	            e.printStackTrace();
@@ -55,8 +52,7 @@ public class MySQL {
 		
 		public static int getStatsTotales(PaintballBattle plugin, String name, String tipo){
 			int cantidad = 0;
-			try {
-				PreparedStatement statement = plugin.getConexionDatabase().getConnection().prepareStatement("SELECT * FROM "+plugin.getConexionDatabase().getTablePlayers()+" WHERE (Name=? AND Global_Data=1)");
+			try (PreparedStatement statement = plugin.getConexionDatabase().getConnection().prepareStatement("SELECT * FROM "+plugin.getConexionDatabase().getTablePlayers()+" WHERE (Name=? AND Global_Data=1)")) {
 				statement.setString(1, name);
 				ResultSet resultado = statement.executeQuery();
 				
@@ -74,8 +70,7 @@ public class MySQL {
 		
 		//Comprueba solo el dato global
 		public static boolean jugadorExiste(PaintballBattle plugin, String player){
-			try {
-				PreparedStatement statement = plugin.getConexionDatabase().getConnection().prepareStatement("SELECT * FROM "+plugin.getConexionDatabase().getTablePlayers()+" WHERE (Name=? AND Global_Data=1)");
+			try (PreparedStatement statement = plugin.getConexionDatabase().getConnection().prepareStatement("SELECT * FROM "+plugin.getConexionDatabase().getTablePlayers()+" WHERE (Name=? AND Global_Data=1)")) {
 				statement.setString(1, player);
 				ResultSet resultado = statement.executeQuery();
 				if(resultado.next()){
@@ -92,8 +87,7 @@ public class MySQL {
 			Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
 	            @Override
 	            public void run() {
-	            	try {
-	            		PreparedStatement statement = plugin.getConexionDatabase().getConnection().prepareStatement("UPDATE "+plugin.getConexionDatabase().getTablePlayers()+" SET Win=?, Tie=?, Lose=?, Kills=? WHERE (Name=? AND Global_Data=1)");
+	            	try (PreparedStatement statement = plugin.getConexionDatabase().getConnection().prepareStatement("UPDATE "+plugin.getConexionDatabase().getTablePlayers()+" SET Win=?, Tie=?, Lose=?, Kills=? WHERE (Name=? AND Global_Data=1)")) {
 	    				statement.setInt(1, wins);
 	    				statement.setInt(2, ties);
 	    				statement.setInt(3, loses);
@@ -112,8 +106,7 @@ public class MySQL {
 			Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
 	            @Override
 	            public void run() {
-	            	try {
-	            		PreparedStatement statement = plugin.getConexionDatabase().getConnection().prepareStatement("UPDATE "+plugin.getConexionDatabase().getTablePlayers()+" SET Coins=`Coins`+? WHERE (Name=? AND Global_Data=1)");
+	            	try (PreparedStatement statement = plugin.getConexionDatabase().getConnection().prepareStatement("UPDATE "+plugin.getConexionDatabase().getTablePlayers()+" SET Coins=`Coins`+? WHERE (Name=? AND Global_Data=1)")) {
 	    				statement.setInt(1, coins);
 	    				statement.setString(2, player);
 	    				statement.executeUpdate();
@@ -129,8 +122,7 @@ public class MySQL {
 			Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
 	            @Override
 	            public void run() {
-	            	try {
-	            		PreparedStatement statement = plugin.getConexionDatabase().getConnection().prepareStatement("UPDATE "+plugin.getConexionDatabase().getTablePlayers()+" SET Coins=`Coins`-? WHERE (Name=? AND Global_Data=1)");
+	            	try (PreparedStatement statement = plugin.getConexionDatabase().getConnection().prepareStatement("UPDATE "+plugin.getConexionDatabase().getTablePlayers()+" SET Coins=`Coins`-? WHERE (Name=? AND Global_Data=1)")) {
 	    				statement.setInt(1, coins);
 	    				statement.setString(2, player);
 	    				statement.executeUpdate();
@@ -155,23 +147,24 @@ public class MySQL {
 	            		int dia = calendar.get(Calendar.DAY_OF_MONTH);
 	            		int dia_semana = calendar.get(Calendar.WEEK_OF_MONTH);
 	            		
-	        			PreparedStatement insert = plugin.getConexionDatabase().getConnection()
-	        					.prepareStatement("INSERT INTO "+plugin.getConexionDatabase().getTablePlayers()+" (UUID,Name,Date,Year,Month,Week,Day,Arena,Win,Tie,Lose,Kills,Coins,Global_Data) VALUE (?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
-	        			insert.setString(1, uuid);
-	        			insert.setString(2, name);
-	        			insert.setString(3, date.getTime()+"");
-	        			insert.setInt(4, año);
-	        			insert.setInt(5, mes);
-	        			insert.setInt(6, dia_semana);
-	        			insert.setInt(7, dia);
-	        			insert.setString(8, arena);
-	        			insert.setInt(9, win);
-	        			insert.setInt(10, tie);
-	        			insert.setInt(11, lose);
-	        			insert.setInt(12, kills);
-	        			insert.setInt(13, coins);
-	        			insert.setInt(14, global);
-	        			insert.executeUpdate();
+	        			try (PreparedStatement insert = plugin.getConexionDatabase().getConnection()
+	        					.prepareStatement("INSERT INTO "+plugin.getConexionDatabase().getTablePlayers()+" (UUID,Name,Date,Year,Month,Week,Day,Arena,Win,Tie,Lose,Kills,Coins,Global_Data) VALUE (?,?,?,?,?,?,?,?,?,?,?,?,?,?)")) {
+		        			insert.setString(1, uuid);
+		        			insert.setString(2, name);
+		        			insert.setString(3, date.getTime()+"");
+		        			insert.setInt(4, año);
+		        			insert.setInt(5, mes);
+		        			insert.setInt(6, dia_semana);
+		        			insert.setInt(7, dia);
+		        			insert.setString(8, arena);
+		        			insert.setInt(9, win);
+		        			insert.setInt(10, tie);
+		        			insert.setInt(11, lose);
+		        			insert.setInt(12, kills);
+		        			insert.setInt(13, coins);
+		        			insert.setInt(14, global);
+		        			insert.executeUpdate();
+	        			}
 	        		} catch (SQLException e) {
 	        			// TODO Auto-generated catch block
 	        			e.printStackTrace();
@@ -182,8 +175,7 @@ public class MySQL {
 		}
 		
 		public static boolean jugadorTieneHat(PaintballBattle plugin, String player, String hat){
-			try {
-				PreparedStatement statement = plugin.getConexionDatabase().getConnection().prepareStatement("SELECT * FROM "+plugin.getConexionDatabase().getTableHats()+" WHERE (Name=? AND Hat=?)");
+			try (PreparedStatement statement = plugin.getConexionDatabase().getConnection().prepareStatement("SELECT * FROM "+plugin.getConexionDatabase().getTableHats()+" WHERE (Name=? AND Hat=?)")) {
 				statement.setString(1, player);
 				statement.setString(2, hat);
 				ResultSet resultado = statement.executeQuery();
@@ -201,9 +193,8 @@ public class MySQL {
 			Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
 	            @Override
 	            public void run() {
-	            	try{
-	        			PreparedStatement insert = plugin.getConexionDatabase().getConnection()
-	        					.prepareStatement("INSERT INTO "+plugin.getConexionDatabase().getTableHats()+" (UUID,Name,Hat,Selected) VALUE (?,?,?,?)");
+	            	try (PreparedStatement insert = plugin.getConexionDatabase().getConnection()
+	        					.prepareStatement("INSERT INTO "+plugin.getConexionDatabase().getTableHats()+" (UUID,Name,Hat,Selected) VALUE (?,?,?,?)")) {
 	        			insert.setString(1, uuid);
 	        			insert.setString(2, name);
 	        			insert.setString(3, hat);
@@ -218,8 +209,7 @@ public class MySQL {
 		}
 		
 		public static boolean jugadorTieneHatSeleccionado(PaintballBattle plugin, String player, String hat){
-			try {
-				PreparedStatement statement = plugin.getConexionDatabase().getConnection().prepareStatement("SELECT * FROM "+plugin.getConexionDatabase().getTableHats()+" WHERE (Name=? AND Hat=? AND Selected=1)");
+			try (PreparedStatement statement = plugin.getConexionDatabase().getConnection().prepareStatement("SELECT * FROM "+plugin.getConexionDatabase().getTableHats()+" WHERE (Name=? AND Hat=? AND Selected=1)")) {
 				statement.setString(1, player);
 				statement.setString(2, hat);
 				ResultSet resultado = statement.executeQuery();
@@ -235,8 +225,7 @@ public class MySQL {
 		
 		public static ArrayList<Hat> getHatsJugador(PaintballBattle plugin,String name){
 			ArrayList<Hat> hats = new ArrayList<Hat>();
-			try {
-				PreparedStatement statement = plugin.getConexionDatabase().getConnection().prepareStatement("SELECT * FROM "+plugin.getConexionDatabase().getTableHats()+" WHERE (Name=?)");
+			try (PreparedStatement statement = plugin.getConexionDatabase().getConnection().prepareStatement("SELECT * FROM "+plugin.getConexionDatabase().getTableHats()+" WHERE (Name=?)")) {
 				statement.setString(1, name);
 				ResultSet resultado = statement.executeQuery();	
 				while(resultado.next()){			
@@ -256,8 +245,7 @@ public class MySQL {
 		}
 		
 		public static void deseleccionarHats(final PaintballBattle plugin,final String player){
-			try {
-        		PreparedStatement statement = plugin.getConexionDatabase().getConnection().prepareStatement("UPDATE "+plugin.getConexionDatabase().getTableHats()+" SET Selected=0 WHERE (Name=? AND Selected=1)");
+			try (PreparedStatement statement = plugin.getConexionDatabase().getConnection().prepareStatement("UPDATE "+plugin.getConexionDatabase().getTableHats()+" SET Selected=0 WHERE (Name=? AND Selected=1)")) {
 				statement.setString(1, player);
 				statement.executeUpdate();
     		} catch (SQLException e) {
@@ -273,10 +261,11 @@ public class MySQL {
 	            	try {
 	            		deseleccionarHats(plugin,player);
 	    				
-	            		PreparedStatement statement = plugin.getConexionDatabase().getConnection().prepareStatement("UPDATE "+plugin.getConexionDatabase().getTableHats()+" SET Selected=1 WHERE (Name=? AND Hat=?)");
-	            		statement.setString(1, player);
-	    				statement.setString(2, hat);
-	    				statement.executeUpdate();
+	            		try (PreparedStatement statement = plugin.getConexionDatabase().getConnection().prepareStatement("UPDATE "+plugin.getConexionDatabase().getTableHats()+" SET Selected=1 WHERE (Name=? AND Hat=?)")) {
+		            		statement.setString(1, player);
+		    				statement.setString(2, hat);
+		    				statement.executeUpdate();
+	            		}
 	        		} catch (SQLException e) {
 	        			// TODO Auto-generated catch block
 	        			e.printStackTrace();
@@ -289,9 +278,8 @@ public class MySQL {
 			Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
 	            @Override
 	            public void run() {
-	            	try{
-	        			PreparedStatement insert = plugin.getConexionDatabase().getConnection()
-	        					.prepareStatement("INSERT INTO "+plugin.getConexionDatabase().getTablePerks()+" (UUID,Name,Perk,Level) VALUE (?,?,?,?)");
+	            	try (PreparedStatement insert = plugin.getConexionDatabase().getConnection()
+	        					.prepareStatement("INSERT INTO "+plugin.getConexionDatabase().getTablePerks()+" (UUID,Name,Perk,Level) VALUE (?,?,?,?)")) {
 	        			insert.setString(1, uuid);
 	        			insert.setString(2, name);
 	        			insert.setString(3, perk);
@@ -308,8 +296,7 @@ public class MySQL {
 		
 		public static int getNivelPerk(PaintballBattle plugin, String name, String perk){
 			int level = 0;
-			try {
-				PreparedStatement statement = plugin.getConexionDatabase().getConnection().prepareStatement("SELECT * FROM "+plugin.getConexionDatabase().getTablePerks()+" WHERE (Name=? AND Perk=?)");
+			try (PreparedStatement statement = plugin.getConexionDatabase().getConnection().prepareStatement("SELECT * FROM "+plugin.getConexionDatabase().getTablePerks()+" WHERE (Name=? AND Perk=?)")) {
 				statement.setString(1, name);
 				statement.setString(2, perk);
 				ResultSet resultado = statement.executeQuery();
@@ -325,8 +312,7 @@ public class MySQL {
 		}
 		
 		public static boolean jugadorPerkExiste(PaintballBattle plugin, String player, String perk){
-			try {
-				PreparedStatement statement = plugin.getConexionDatabase().getConnection().prepareStatement("SELECT * FROM "+plugin.getConexionDatabase().getTablePerks()+" WHERE (Name=? AND Perk=?)");
+			try (PreparedStatement statement = plugin.getConexionDatabase().getConnection().prepareStatement("SELECT * FROM "+plugin.getConexionDatabase().getTablePerks()+" WHERE (Name=? AND Perk=?)")) {
 				statement.setString(1, player);
 				statement.setString(2, perk);
 				ResultSet resultado = statement.executeQuery();
@@ -342,8 +328,7 @@ public class MySQL {
 		
 		public static ArrayList<Perk> getPerksJugador(PaintballBattle plugin,String name){
 			ArrayList<Perk> perks = new ArrayList<Perk>();
-			try {
-				PreparedStatement statement = plugin.getConexionDatabase().getConnection().prepareStatement("SELECT * FROM "+plugin.getConexionDatabase().getTablePerks()+" WHERE (Name=?)");
+			try (PreparedStatement statement = plugin.getConexionDatabase().getConnection().prepareStatement("SELECT * FROM "+plugin.getConexionDatabase().getTablePerks()+" WHERE (Name=?)")) {
 				statement.setString(1, name);
 				ResultSet resultado = statement.executeQuery();	
 				while(resultado.next()){			
@@ -363,8 +348,7 @@ public class MySQL {
 				Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
 		            @Override
 		            public void run() {
-		            	try {
-		            		PreparedStatement statement = plugin.getConexionDatabase().getConnection().prepareStatement("UPDATE "+plugin.getConexionDatabase().getTablePerks()+" SET Level=? WHERE (Name=? AND Perk=?)");
+		            	try (PreparedStatement statement = plugin.getConexionDatabase().getConnection().prepareStatement("UPDATE "+plugin.getConexionDatabase().getTablePerks()+" SET Level=? WHERE (Name=? AND Perk=?)")) {
 		    				statement.setInt(1, level);
 		    				statement.setString(2, player);
 		    				statement.setString(3, perk);
@@ -382,8 +366,7 @@ public class MySQL {
 		}
 		
 		public static JugadorDatos getJugador(PaintballBattle plugin,String name){
-			try {
-				PreparedStatement statement = plugin.getConexionDatabase().getConnection().prepareStatement("SELECT * FROM "+plugin.getConexionDatabase().getTablePlayers()+" WHERE (Global_Data=1 AND Name=?)");
+			try (PreparedStatement statement = plugin.getConexionDatabase().getConnection().prepareStatement("SELECT * FROM "+plugin.getConexionDatabase().getTablePlayers()+" WHERE (Global_Data=1 AND Name=?)")) {
 				statement.setString(1, name);
 				ResultSet resultado = statement.executeQuery();	
 				while(resultado.next()){			
@@ -410,8 +393,7 @@ public class MySQL {
 			calendar.setTime(date);
 			int mes = calendar.get(Calendar.MONTH);
 			int año = calendar.get(Calendar.YEAR);
-			try {
-				PreparedStatement statement = plugin.getConexionDatabase().getConnection().prepareStatement("SELECT * FROM "+plugin.getConexionDatabase().getTablePlayers()+" WHERE (Year="+año+" AND Month="+mes+" AND Global_Data=0)");
+			try (PreparedStatement statement = plugin.getConexionDatabase().getConnection().prepareStatement("SELECT * FROM "+plugin.getConexionDatabase().getTablePlayers()+" WHERE (Year="+año+" AND Month="+mes+" AND Global_Data=0)")) {
 				ResultSet resultado = statement.executeQuery();	
 				while(resultado.next()){
 					String name = resultado.getString("Name");
@@ -439,8 +421,7 @@ public class MySQL {
 			int año = calendar.get(Calendar.YEAR);
 			int semana = calendar.get(Calendar.WEEK_OF_MONTH);
 			
-			try {
-				PreparedStatement statement = plugin.getConexionDatabase().getConnection().prepareStatement("SELECT * FROM "+plugin.getConexionDatabase().getTablePlayers()+" WHERE (Year="+año+" AND Month="+mes+" AND Week="+semana+" AND Global_Data=0)");
+			try (PreparedStatement statement = plugin.getConexionDatabase().getConnection().prepareStatement("SELECT * FROM "+plugin.getConexionDatabase().getTablePlayers()+" WHERE (Year="+año+" AND Month="+mes+" AND Week="+semana+" AND Global_Data=0)")) {
 				ResultSet resultado = statement.executeQuery();	
 				while(resultado.next()){
 					String name = resultado.getString("Name");
@@ -469,8 +450,7 @@ public class MySQL {
 		
 		public static int[] getStatsTotalesWeekly(PaintballBattle plugin, String name, int mes, int año, int semana){
 			int[] cantidades = {0,0,0,0}; //Wins,Loses,Ties,Kills
-			try {
-				PreparedStatement statement = plugin.getConexionDatabase().getConnection().prepareStatement("SELECT * FROM "+plugin.getConexionDatabase().getTablePlayers()+" WHERE (Name=? AND Year="+año+" AND Month="+mes+" AND Week="+semana+" AND Global_Data=0)");
+			try (PreparedStatement statement = plugin.getConexionDatabase().getConnection().prepareStatement("SELECT * FROM "+plugin.getConexionDatabase().getTablePlayers()+" WHERE (Name=? AND Year="+año+" AND Month="+mes+" AND Week="+semana+" AND Global_Data=0)")) {
 				statement.setString(1, name);
 				ResultSet resultado = statement.executeQuery();
 				
@@ -490,8 +470,7 @@ public class MySQL {
 		
 		public static int[] getStatsTotalesMonthly(PaintballBattle plugin, String name, int mes, int año){
 			int[] cantidades = {0,0,0,0}; //Wins,Loses,Ties,Kills
-			try {
-				PreparedStatement statement = plugin.getConexionDatabase().getConnection().prepareStatement("SELECT * FROM "+plugin.getConexionDatabase().getTablePlayers()+" WHERE (Name=? AND Year="+año+" AND Month="+mes+" AND Global_Data=0)");
+			try (PreparedStatement statement = plugin.getConexionDatabase().getConnection().prepareStatement("SELECT * FROM "+plugin.getConexionDatabase().getTablePlayers()+" WHERE (Name=? AND Year="+año+" AND Month="+mes+" AND Global_Data=0)")) {
 				statement.setString(1, name);
 				ResultSet resultado = statement.executeQuery();
 				
@@ -512,8 +491,7 @@ public class MySQL {
 		//Se cargan solo las globales
 		public static ArrayList<JugadorDatos> getPlayerData(PaintballBattle plugin){
 			ArrayList<JugadorDatos> players = new ArrayList<JugadorDatos>();
-			try {
-				PreparedStatement statement = plugin.getConexionDatabase().getConnection().prepareStatement("SELECT * FROM "+plugin.getConexionDatabase().getTablePlayers()+" WHERE Global_Data=1");
+			try (PreparedStatement statement = plugin.getConexionDatabase().getConnection().prepareStatement("SELECT * FROM "+plugin.getConexionDatabase().getTablePlayers()+" WHERE Global_Data=1")) {
 				ResultSet resultado = statement.executeQuery();	
 				while(resultado.next()){			
 					String name = resultado.getString("Name");

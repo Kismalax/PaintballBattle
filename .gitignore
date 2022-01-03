@@ -40,3 +40,4 @@ local.properties
 .players/
 holograms.yml
 arenas.yml
+/target/

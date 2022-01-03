@@ -11,20 +11,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import pb.ajneb97.juego.JugadorPaintball;
-import pb.ajneb97.versiones.V1_10;
-import pb.ajneb97.versiones.V1_11;
-import pb.ajneb97.versiones.V1_12;
-import pb.ajneb97.versiones.V1_13;
-import pb.ajneb97.versiones.V1_13_R2;
-import pb.ajneb97.versiones.V1_14;
-import pb.ajneb97.versiones.V1_15;
-import pb.ajneb97.versiones.V1_16;
 import pb.ajneb97.versiones.V1_17;
-import pb.ajneb97.versiones.V1_8_R1;
-import pb.ajneb97.versiones.V1_8_R2;
-import pb.ajneb97.versiones.V1_8_R3;
-import pb.ajneb97.versiones.V1_9_R1;
-import pb.ajneb97.versiones.V1_9_R2;
 
 public class UtilidadesItems {
 
@@ -57,11 +44,8 @@ public class UtilidadesItems {
 				
 		  	}
 		  	meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES,ItemFlag.HIDE_ENCHANTS,ItemFlag.HIDE_UNBREAKABLE,ItemFlag.HIDE_POTION_EFFECTS);
-		  	if(Bukkit.getVersion().contains("1.15") || Bukkit.getVersion().contains("1.16") || Bukkit.getVersion().contains("1.17")) {
-		  		meta.setUnbreakable(true);
-		  	}else {
-		  		meta.spigot().setUnbreakable(true); //SOLO FUNCIONA CON SPIGOT
-		  	}
+		  	meta.setUnbreakable(true);
+		  	
 		  	stack.setItemMeta(meta);
 			
 			return stack;
@@ -90,71 +74,6 @@ public class UtilidadesItems {
 		if(packageName.contains("1_17_")){
 			V1_17 u = new V1_17();
 			ItemStack stack = u.getCabeza(item,id,textura);			
-			return stack;
-		}
-		if(packageName.contains("1_16_")){
-			V1_16 u = new V1_16();
-			ItemStack stack = u.getCabeza(item,id,textura);			
-			return stack;
-		}
-		if(packageName.contains("1_15_R1")){
-			V1_15 u = new V1_15();
-			ItemStack stack = u.getCabeza(item,id,textura);			
-			return stack;
-		}
-		else if(packageName.contains("1_14_R1")){
-			V1_14 u = new V1_14();
-			ItemStack stack = u.getCabeza(item,id,textura);			
-			return stack;
-		}
-		else if(packageName.contains("1_13_R2")){
-			V1_13_R2 u = new V1_13_R2();
-			ItemStack stack = u.getCabeza(item,id,textura);			
-			return stack;
-		}
-		else if(packageName.contains("1_13_R1")){
-			V1_13 u = new V1_13();
-			ItemStack stack = u.getCabeza(item,id,textura);			
-			return stack;
-		}
-		else if(packageName.contains("1_12_R1")){
-			V1_12 u = new V1_12();
-			ItemStack stack = u.getCabeza(item,id,textura);			
-			return stack;
-		}
-		else if(packageName.contains("1_11_R1")){
-			V1_11 u = new V1_11();
-			ItemStack stack = u.getCabeza(item,id,textura);				
-			return stack;
-		}
-		else if(packageName.contains("1_10_R1")){
-			V1_10 u = new V1_10();
-			ItemStack stack = u.getCabeza(item,id,textura);				
-			return stack;
-		}
-		else if(packageName.contains("1_9_R2")){
-			V1_9_R2 u = new V1_9_R2();
-			ItemStack stack = u.getCabeza(item,id,textura);				
-			return stack;
-		}
-		else if(packageName.contains("1_9_R1")){
-			V1_9_R1 u = new V1_9_R1();
-			ItemStack stack = u.getCabeza(item,id,textura);				
-			return stack;
-		}
-		else if(packageName.contains("1_8_R3")){
-			V1_8_R3 u = new V1_8_R3();
-			ItemStack stack = u.getCabeza(item,id,textura);				
-			return stack;
-		}
-		else if(packageName.contains("1_8_R2")){
-			V1_8_R2 u = new V1_8_R2();
-			ItemStack stack = u.getCabeza(item,id,textura);				
-			return stack;
-		}
-		else if(packageName.contains("1_8_R1")){
-			V1_8_R1 u = new V1_8_R1();
-			ItemStack stack = u.getCabeza(item,id,textura);				
 			return stack;
 		}
 		else{
